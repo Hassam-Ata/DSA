@@ -1,83 +1,105 @@
-#include<iostream>
-#include<stack>
+#include <iostream>
 using namespace std;
-int precedence(char c)
+#include <stack>
+#include <string>
+void infixToPostfix(string s)
 {
-    if (c=='^')
-    {
-        return 3;
-    }
-    else if (c=='*'||c=='/')
-    {
-        return 2;
-    }
-    else if (c=='+'||c=='-')
-    {
-        /* code */
-        return 1;
-    }
-    else
-    {
-        return -1;
-    }
+    stack<string> val;
+    stack<char> op;
 
-    
-}
-void intopost(string s)
-{
-    string result;
-    stack <char> st;
-    for (int i = 0; i < s.length(); i++)
+    for (int i = 0; i < s.size(); i++)
     {
-        char ch=s[i];
-        if ((ch>='a'&&ch<='z')||(ch>='0'&&ch<='9')||(ch>='A'&&ch<='Z'))
+        char ch = s[i];
+       if ((ch >= '0' && ch <= '9'))
+{
+    string str(1, ch); // Create a string from the character
+    val.push(str + " "); // Push the string to the stack with appended space
+}
+
+
+        else if (op.size() == 0 || ch == '(' || op.top() == '(')
+            op.push(ch);
+
+        else if (ch == ')')
         {
-            result=result+ch;
-         
-        }
-        else if (ch=='(')
-        {
-            st.push(ch);
-        }
-        else if (ch==')')
-        {
-            while (st.top()!='(')
+            while (op.top() != '(')
             {
-                result=result+st.top();
-                st.pop();
+                string v2 = val.top();
+                val.pop();
+                string v1 = val.top();
+                val.pop();
+                char o = op.top();
+                op.pop();
+
+                string exp = o + v1 + v2;
+                val.push(exp);
             }
-            st.pop();
-            
+            op.pop();
         }
+
         else
         {
-            while (!st.empty()&& precedence(ch)<=precedence(st.top()))
+
+            if (ch == '+' || ch == '-')
             {
-                result=result+st.top();
-                st.pop();
+                string v2 = val.top();
+                val.pop();
+                string v1 = val.top();
+                val.pop();
+                char o = op.top();
+                op.pop();
+
+                string exp = o + v1 + v2;
+                val.push(exp);
+
+                op.push(ch);
             }
-            st.push(ch);
-            
+            else
+            {
+                if (ch == '*' || ch == '/')
+                {
+                    if (op.top() == '*' || op.top() == '/')
+                    {
+
+                        string v2 = val.top();
+                        val.pop();
+                        string v1 = val.top();
+                        val.pop();
+                        char o = op.top();
+                        op.pop();
+
+                        string exp = o + v1 + v2;
+                        val.push(exp);
+                        op.push(ch);
+                    }
+                    else
+                    {
+                        op.push(ch);
+                    }
+                }
+            }
         }
-     
-        
-        
     }
-       while (!st.empty())
-        {
-         result=result+st.top();
-         st.pop();
-        }
-    
-  cout<<result<<endl;
 
+    while (val.size() > 1)
+    {
+        string v2 = val.top();
+        val.pop();
+        string v1 = val.top();
+        val.pop();
+        char o = op.top();
+        op.pop();
 
+        string exp = o + v1 + v2;
+        val.push(exp);
+    }
+
+    string prefix=val.top();
+    cout<<prefix;
 }
 int main()
 {
-    string s="a+b*(c/d)";
-    
-    intopost(s);
-    
+    string s = "9-(5+3)*4/6";
+    infixToPostfix(s);
     return 0;
 }

@@ -5,16 +5,16 @@ using namespace std;
 void infixEvaluation(string s)
 {
     stack<int>val;
-stack<char>op;
+    stack<char>op;
 
     for (int i = 0; i <s.size(); i++)
     {
-        char ch=s[i];
-        if (isdigit(ch))
-        {
-            val.push(ch - '0');
-            
-        }
+       char ch = s[i];
+      if ((ch >= '0' && ch <= '9')) 
+      {
+        val.push(ch - '0');
+      }
+
         else if(op.size()==0 ||ch=='('||op.top()=='(')op.push(ch);
 
         else if (ch==')')
